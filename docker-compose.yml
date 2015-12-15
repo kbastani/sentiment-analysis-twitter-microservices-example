@@ -1,0 +1,33 @@
+hdfs:
+  image: sequenceiq/hadoop-docker:2.4.1
+  command: /etc/bootstrap.sh -d -bash
+mazerunner:
+  image: kbastani/neo4j-graph-analytics:latest
+  links:
+   - hdfs
+graphdb:
+  image: kbastani/docker-neo4j:2.2.3
+  ports:
+   - "7474:7474"
+   - "1337:1337"
+  volumes:
+   - /opt/data
+  links:
+   - mazerunner
+   - hdfs
+rabbit:
+  image: rabbitmq:3
+#twitter-analytics-web:
+#  image: kbastani/twitter-analytics-web:latest
+#  ports:
+#   - "8080:8080"
+#  links:
+#   - rabbit
+#   - graphdb
+twitter-aggregator:
+  image: kbastani/twitter-aggregator:latest
+  ports:
+   - "8081:8081"
+  links:
+   - rabbit
+   - graphdb

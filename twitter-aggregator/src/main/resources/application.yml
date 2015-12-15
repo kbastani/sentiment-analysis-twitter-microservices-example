@@ -1,0 +1,43 @@
+spring.profiles.active: 'production'
+---
+server:
+  port: 8081
+  servletPath: /
+spring:
+  neo4j:
+    port: 7474
+    host: 'graphdb'
+  rabbitmq:
+    port: 5672
+    host: 'rabbit'
+    listener:
+      max-concurrency: 1
+      prefetch: 1
+  social:
+    twitter:
+      accessTokenSecret: 'accessTokenSecret'
+      accessToken: 'accessToken'
+      appSecret: 'appSecret'
+      appId: 'appId'
+  profiles: 'production'
+---
+server:
+  port: 8081
+  servletPath: /
+spring:
+  neo4j:
+    port: 7474
+    host: 'graphdb'
+  rabbitmq:
+    port: 5672
+    host: 'rabbit'
+    listener:
+      max-concurrency: 1
+      prefetch: 1
+  social:
+    twitter:
+      accessTokenSecret: 'accessTokenSecret'
+      accessToken: 'accessToken'
+      appSecret: 'appSecret'
+      appId: 'appId'
+  profiles: 'test'
