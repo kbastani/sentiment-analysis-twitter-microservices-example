@@ -13,6 +13,11 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * This is the {@link User} domain class that represents a Twitter profile as a Neo4j node
+ *
+ * @author kbastani
+ */
 @NodeEntity
 public class User implements Serializable {
 

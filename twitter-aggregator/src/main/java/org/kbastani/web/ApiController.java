@@ -8,6 +8,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Provides a single REST endpoint for seeding users to crawl on Twitter. Automated
+ * crawling of Twitter users requires three seed users as input.
+ *
+ * @author kbastani
+ */
 @RestController
 @RequestMapping("v1")
 public class ApiController {

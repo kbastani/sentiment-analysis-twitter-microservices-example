@@ -6,6 +6,12 @@ import org.neo4j.ogm.annotation.NodeEntity;
 import java.io.Serializable;
 import java.util.Date;
 
+/**
+ * This class represents an imported {@link org.springframework.social.twitter.api.Tweet} from the
+ * Twitter API, as a domain class for a Neo4j node
+ *
+ * @author kbastani
+ */
 @NodeEntity
 public class Tweet implements Serializable {
 

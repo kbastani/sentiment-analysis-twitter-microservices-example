@@ -19,6 +19,14 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 
+/**
+ * This class is the crawler that receives messages from three different queues and performs
+ * work serially to import the graph of users received from the Twitter API. If the rate limit
+ * of the Twitter API is succeeded, the message will be re-inserted back into the queue and
+ * the operation will retry once the rate limit has been reset.
+ *
+ * @author kbastani
+ */
 @Component
 public class Receiver {
 
@@ -40,6 +48,11 @@ public class Receiver {
         this.userRepository = userRepository;
     }
 
+    /**
+     * Receives a message containing a Twitter user that will have their follows/followers graph imported to Neo4j
+     *
+     * @param message is a message containing information about the user profile that should be imported
+     */
     @RabbitListener(queues = {"twitter.profiles"})
     public void receiveMessage(String message) {
         User user = null;
@@ -57,6 +70,13 @@ public class Receiver {
         log.info(user);
     }
 
+    /**
+     * Receives a message containing a user profile that should have their followers imported into Neo4j.
+     * On successful completion, a message is sent to the next queue to import the users that this profile
+     * follows.
+     *
+     * @param message is the message containing information about the user profile
+     */
     @RabbitListener(queues = {"twitter.followers"})
     public void followers(String message) throws InterruptedException {
         User user = null;
@@ -94,6 +114,12 @@ public class Receiver {
         log.info(user);
     }
 
+    /**
+     * Saves a cursored list of followers from the Twitter API in batches to Neo4j
+     *
+     * @param user      is the {@link User} that is the owner of the relationships being imported
+     * @param followers are the profiles that the @{link User} is being followed by
+     */
     private void saveFollowers(User user, CursoredList<Long> followers) {
         final User finalUser = user;
 
@@ -121,6 +147,11 @@ public class Receiver {
         }
     }
 
+    /**
+     * Receives a message containing a user profile that should have the users they follow imported into Neo4j
+     *
+     * @param message is the message containing information about the user profile
+     */
     @RabbitListener(queues = {"twitter.follows"})
     public void follows(String message) throws InterruptedException {
         User user = null;
@@ -152,7 +183,7 @@ public class Receiver {
                 // Queue next user
                 User nextUser = userRepository.findRankedUserToCrawl();
 
-                if(nextUser == null) {
+                if (nextUser == null) {
                     nextUser = userRepository.findNextUserToCrawl();
                 }
 
@@ -169,10 +200,16 @@ public class Receiver {
         }
     }
 
-    private void saveFollows(User user, CursoredList<Long> followers) {
+    /**
+     * Saves a cursored list of followers from the Twitter API in batches to Neo4j
+     *
+     * @param user    is the {@link User} that is the owner of the relationships being imported
+     * @param follows are the profiles that the @{link User} follows
+     */
+    private void saveFollows(User user, CursoredList<Long> follows) {
         final User finalUser = user;
 
-        List<User> users = followers.stream().map(a -> new User(a,
+        List<User> users = follows.stream().map(a -> new User(a,
                 null, Collections.singletonList(new User(finalUser.getId(), finalUser.getProfileId())).stream().collect(Collectors.toList())))
                 .collect(Collectors.toList());
 

@@ -6,6 +6,11 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.Set;
 
+/**
+ * The {@link User} repository provides custom Cypher queries as repository search operations
+ *
+ * @author kbastani
+ */
 public interface UserRepository extends GraphRepository<User> {
     User findUserByScreenName(String screenName);
 

@@ -1,4 +1,4 @@
-spring.profiles.active: 'production'
+spring.profiles.active: 'development'
 ---
 server:
   port: 8081
@@ -20,6 +20,27 @@ spring:
       appSecret: 'appSecret'
       appId: 'appId'
   profiles: 'production'
+---
+server:
+  port: 8081
+  servletPath: /
+spring:
+  neo4j:
+    port: 7474
+    host: '192.168.99.100'
+  rabbitmq:
+    port: 5672
+    host: 'localhost'
+    listener:
+      max-concurrency: 1
+      prefetch: 1
+  social:
+    twitter:
+      accessTokenSecret: 'accessTokenSecret'
+      accessToken: 'accessToken'
+      appSecret: 'appSecret'
+      appId: 'appId'
+  profiles: 'development'
 ---
 server:
   port: 8081

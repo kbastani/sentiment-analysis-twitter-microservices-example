@@ -2,8 +2,14 @@ package org.kbastani.twitter;
 
 import org.neo4j.ogm.annotation.*;
 
+/**
+ * This domain class is a Neo4j relationship indicating a directed follows connection between two users.
+ *
+ * @author kbastani
+ */
 @RelationshipEntity(type = "FOLLOWS")
 public class Follows {
+
     @GraphId
     private Long relationshipId;
     @StartNode

@@ -12,6 +12,14 @@ import org.springframework.web.client.RestTemplate;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+/**
+ * This class is the scheduler that makes sure that jobs are scheduled on a fixed
+ * interval. The first of the two jobs is discovery of new users based on
+ * the most relevant next user to import determined by PageRank. The second
+ * job is to schedule a PageRank analysis of all data every five minutes.
+ *
+ * @author kbastani
+ */
 @Component
 public class AnalyticsScheduler {
 
@@ -30,25 +38,33 @@ public class AnalyticsScheduler {
         this.neo4jServer = neo4jServer;
     }
 
+    /**
+     * Every five minutes a PageRank job is scheduled with Neo4j's Mazerunner service
+     */
     @Scheduled(fixedRate = 300000, initialDelay = 300000)
     public void schedulePageRank() {
         System.out.println("PageRank scheduled on follows graph " + dateFormat.format(new Date()));
 
-        if(userRepository.findNextUserToCrawl() != null) {
-            // Make sure Neo4j is available
+        if (userRepository.findNextUserToCrawl() != null) {
+            // Schedule a PageRank job with Neo4j's Mazerunnner service
             restTemplate.getForEntity(String.format("%s/service/mazerunner/analysis/pagerank/FOLLOWS", neo4jServer.url()), null);
         }
     }
 
+    /**
+     * Every minute, an attempt to discover a new user to be imported is attempted. This only succeeds if
+     * the API is not restricted by a temporary rate limit. This makes sure that only relevant users are
+     * discovered over time, to keep the API crawling relevant.
+     */
     @Scheduled(fixedRate = 60000)
     public void scheduleDiscoverUser() {
-        if(!resetTimer) {
+        if (!resetTimer) {
             System.out.println("Discover user scheduled on follows graph " + dateFormat.format(new Date()));
 
             // Use ranked users when possible
             User user = userRepository.findRankedUserToCrawl();
 
-            if(user == null) {
+            if (user == null) {
                 user = userRepository.findNextUserToCrawl();
             }
 

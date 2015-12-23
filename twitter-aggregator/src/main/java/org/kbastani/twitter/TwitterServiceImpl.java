@@ -11,6 +11,12 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
+/**
+ * This class implements the service contract for {@link TwitterService} and
+ * is responsible for discovering users by screen name or profile ID.
+ *
+ * @author kbastani
+ */
 @Service
 public class TwitterServiceImpl implements TwitterService {
 
@@ -21,6 +27,10 @@ public class TwitterServiceImpl implements TwitterService {
     private final RabbitTemplate rabbitTemplate;
     private final ObjectMapper objectMapper;
 
+    // These two fields are constants that target users below follows/following thresholds
+    private final Integer MAX_FOLLOWS = 50000;
+    private final Integer MAX_FOLLOWERS = 50000;
+
     @Autowired
     public TwitterServiceImpl(Twitter twitter, UserRepository userRepository, RabbitTemplate rabbitTemplate, ObjectMapper objectMapper) {
         this.twitter = twitter;
@@ -29,6 +39,12 @@ public class TwitterServiceImpl implements TwitterService {
         this.objectMapper = objectMapper;
     }
 
+    /**
+     * Discover a user on Twitter using only their screen name
+     *
+     * @param screenName is the screen name of the user on Twitter
+     * @return a user that has been retrieved from the Twitter API and saved to Neo4j
+     */
     public User discoverUserByScreenName(String screenName) {
         User user;
 
@@ -41,6 +57,12 @@ public class TwitterServiceImpl implements TwitterService {
         return user;
     }
 
+    /**
+     * Discover a user on Twitter using their profile ID
+     *
+     * @param profileId is the profile ID of the user on thw Twitter API
+     * @return a user that has been retrieved from the Twitter API and saved to Neo4j
+     */
     public User discoverUserByProfileId(Long profileId) {
         User user;
 
@@ -55,6 +77,12 @@ public class TwitterServiceImpl implements TwitterService {
         return user;
     }
 
+    /**
+     * Submit a job to crawl this user only if their follows/follower counts are within limits
+     *
+     * @param user is the {@link User} that is to potentially be requested for crawling
+     * @return the saved {@link User} with full profile information now updated on the Neo4j node
+     */
     private User getUser(User user) {
         User savedUser = userRepository.findUserByProfileId(user.getProfileId());
 
@@ -66,13 +94,13 @@ public class TwitterServiceImpl implements TwitterService {
 
         try {
             // Only crawl users that have manageable follows/follower counts
-            if(user.getFollowerCount() < 50000 && user.getFollowsCount() < 50000) {
+            if (user.getFollowerCount() < MAX_FOLLOWERS && user.getFollowsCount() < MAX_FOLLOWS) {
                 rabbitTemplate.convertAndSend(QUEUE_NAME, objectMapper.writeValueAsString(user));
             } else {
                 // Retry
                 User nextUserToCrawl = userRepository.findNextUserToCrawl();
 
-                if(nextUserToCrawl != null) {
+                if (nextUserToCrawl != null) {
                     this.discoverUserByProfileId(nextUserToCrawl.getProfileId());
                 }
             }
