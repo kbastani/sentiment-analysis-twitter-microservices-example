@@ -177,10 +177,8 @@ public class Receiver {
 
                 log.info(user);
 
-                // Update user's imported flag
-                User updatedUser = userRepository.findOne(user.getId(), 0);
-                updatedUser.setImported(true);
-                userRepository.save(updatedUser, 0);
+                // Prepares the user to be ranked on the leader board
+                prepareUserForRanking(user);
 
                 // Reset the timer
                 AnalyticsScheduler.resetTimer = true;
@@ -202,6 +200,26 @@ public class Receiver {
             ampqTemplate.convertAndSend("twitter.follows", message);
         } catch (Exception ex) {
             log.info(ex);
+        }
+    }
+
+    /**
+     * Prepares a user to be ranked for the first time after having follower
+     * data imported, resetting the previous PageRanks and preparing for a new
+     * calculation and ranking.
+     *
+     * @param user is the user that should be prepared for being ranked
+     */
+    private void prepareUserForRanking(User user) {
+        // Update user's imported flag and reset the pagerank fields
+        User updatedUser = userRepository.findOne(user.getId(), 0);
+        if (updatedUser.getImported() == null || !updatedUser.getImported()) {
+            updatedUser.setImported(true);
+            updatedUser.setPagerank(null);
+            updatedUser.setLastPageRank(null);
+            updatedUser.setCurrentRank(null);
+            updatedUser.setPreviousRank(null);
+            userRepository.save(updatedUser, 0);
         }
     }
 
