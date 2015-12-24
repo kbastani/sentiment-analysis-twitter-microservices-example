@@ -1,12 +1,17 @@
 $(function () {
-// ignore this first line (its fidle mock) and it will return what ever you pass as json:... parameter... consider to change it to your ajax call
     $.ajax({
         url: '/twitter-rank/users/search/findRankedUsers?skip=0&limit=100',
         type: "get",
         dataType: "json",
-        success: function (data, textStatus, jqXHR) {
-            // since we are using jQuery, you don't need to parse response
+        success: function (data) {
+            $(".loader").hide();
             drawTable(data._embedded.users);
+        },
+        error: function (xhr, status) {
+            $(".glyphicon-refresh")
+                .removeClass("glyphicon-refresh")
+                .removeClass("glyphicon-refresh-animate")
+                .addClass("glyphicon-exclamation-sign")
         }
     });
 
@@ -18,8 +23,11 @@ $(function () {
 
     function drawRow(rowData) {
         var row = $("<tr />")
-        $("#personDataTable").append(row); //this will append tr element to table... keep its reference for a while since we will add cels into it
+        $("#personDataTable").append(row);
 
+        var currentRank = rowData.currentRank == null ? "<i class='fa fa-plus'></i>" : rowData.currentRank + ".";
+
+        row.append($("<td class='rank-col'>" + currentRank + "</td>"));
         row.append($("<td><img src='" + rowData.profileImageUrl + "'/></td>"));
         row.append($("<td>" + rowData.name + "</td>"));
         row.append($("<td><a href='http://www.twitter.com/" + rowData.screenName + "' target='_blank'>@" + rowData.screenName + "</a></td>"));

@@ -61,7 +61,7 @@ public interface UserRepository extends GraphRepository<User> {
      * Updates the current rank and last rank of each ranked user. This query allows us to see how much a
      * user's rank has increased or decreased from the last PageRank job.
      */
-    @Query("MATCH (user:User) WHERE has(user.pagerank) AND has(user.screenName) AND has(user.lastPageRank)\n" +
+    @Query("MATCH (user:User) WHERE has(user.pagerank) AND has(user.screenName) AND has(user.lastPageRank) AND user.imported = true\n" +
             "WITH user\n" +
             "ORDER BY user.pagerank DESC\n" +
             "WITH collect(user) as users\n" +
