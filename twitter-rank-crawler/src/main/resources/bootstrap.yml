@@ -1,0 +1,10 @@
+spring.profiles.active: 'production'
+---
+spring:
+  application:
+    name: twitter-rank
+  cloud:
+    config:
+      uri: http://config:8888
+encrypt:
+  failOnError: false

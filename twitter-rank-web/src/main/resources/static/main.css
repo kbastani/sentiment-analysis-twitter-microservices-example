@@ -1,0 +1,21 @@
+.fa-caret-up {
+    color: green;
+    text-shadow: 1px 1px 1px #ccc;
+    font-size: 1.75em;
+}
+
+.fa-caret-down {
+    color: red;
+    text-shadow: 1px 1px 1px #ccc;
+    font-size: 1.75em;
+}
+
+.fa-minus {
+    color: #999;
+    text-shadow: 1px 1px 1px #ccc;
+    font-size: 1em;
+}
+
+.table > tbody > tr > td, .table > tbody > tr > th, .table > tfoot > tr > td, .table > tfoot > tr > th, .table > thead > tr > td, .table > thead > tr > th {
+    vertical-align: middle;
+}

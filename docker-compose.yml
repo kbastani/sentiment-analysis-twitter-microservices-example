@@ -1,3 +1,11 @@
+discovery:
+  image: kbastani/spring-discovery:latest
+  ports:
+   - "8761:8761"
+config:
+  image: kbastani/spring-config:latest
+  ports:
+   - "8888:8888"
 hdfs:
   image: sequenceiq/hadoop-docker:2.4.1
   command: /etc/bootstrap.sh -d -bash
@@ -17,22 +25,27 @@ graphdb:
    - hdfs
 rabbit:
   image: rabbitmq:3
-twitter-analytics-web:
-  image: kbastani/twitter-analytics-web:latest
+twitter-rank-web:
+  image: kbastani/twitter-rank-web:latest
+  ports:
+   - "8081:8081"
+  links:
+   - config
+   - discovery
+  environment:
+    SPRING_PROFILES_ACTIVE: "production"
+twitter-rank-crawler:
+  image: kbastani/twitter-rank-crawler:latest
   ports:
    - "8080:8080"
   links:
-   - rabbit
-   - graphdb
-twitter-aggregator:
-  image: kbastani/twitter-aggregator:latest
-  ports:
-   - "80:8081"
-  links:
+   - config
+   - discovery
    - rabbit
    - graphdb
   environment:
-    SPRING_SOCIAL_TWITTER_ACCESSTOKENSECRET: "<REPLACE>"
-    SPRING_SOCIAL_TWITTER_ACCESSTOKEN: "<REPLACE>"
-    SPRING_SOCIAL_TWITTER_APPSECRET: "<REPLACE>"
-    SPRING_SOCIAL_TWITTER_APPID: "<REPLACE>"
+    SPRING_SOCIAL_TWITTER_ACCESSTOKENSECRET: "REPLACE"
+    SPRING_SOCIAL_TWITTER_ACCESSTOKEN: "REPLACE"
+    SPRING_SOCIAL_TWITTER_APPSECRET: "REPLACE"
+    SPRING_SOCIAL_TWITTER_APPID: "REPLACE"
+    SPRING_PROFILES_ACTIVE: "production"

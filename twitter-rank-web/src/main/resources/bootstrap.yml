@@ -1,0 +1,11 @@
+spring.profiles.active: 'production'
+---
+spring:
+  profiles: production
+  application:
+    name: twitter-rank-web
+---
+spring:
+  profiles: development
+  application:
+    name: twitter-rank-web

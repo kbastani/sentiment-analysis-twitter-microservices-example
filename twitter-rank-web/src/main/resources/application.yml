@@ -1,0 +1,25 @@
+spring.profiles.active: 'production'
+---
+server:
+  port: 8081
+  servletPath: /
+spring:
+  profiles: 'production'
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://discovery:8761/eureka/
+  instance:
+    preferIpAddress: true
+---
+server:
+  port: 8081
+  servletPath: /
+spring:
+  profiles: 'development'
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://192.168.99.100:8761/eureka/
+  instance:
+    preferIpAddress: true

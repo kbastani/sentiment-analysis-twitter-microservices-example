@@ -1,0 +1,55 @@
+spring.profiles.active: 'production'
+---
+server:
+  port: 8080
+  servletPath: /
+spring:
+  neo4j:
+    port: 7474
+    host: 'graphdb'
+  rabbitmq:
+    port: 5672
+    host: 'rabbit'
+    listener:
+      max-concurrency: 1
+      prefetch: 1
+  social:
+    twitter:
+      accessTokenSecret: 'accessTokenSecret'
+      accessToken: 'accessToken'
+      appSecret: 'appSecret'
+      appId: 'appId'
+  profiles: 'production'
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://discovery:8761/eureka/
+  instance:
+    preferIpAddress: true
+---
+server:
+  port: 8080
+  servletPath: /
+spring:
+  neo4j:
+    port: 7474
+    host: '192.168.99.100'
+  rabbitmq:
+    port: 5672
+    host: 'localhost'
+    listener:
+      max-concurrency: 1
+      prefetch: 1
+  social:
+    twitter:
+      accessTokenSecret: 'accessTokenSecret'
+      accessToken: 'accessToken'
+      appSecret: 'appSecret'
+      appId: 'appId'
+  profiles: 'development'
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://192.168.99.100:8761/eureka/
+  instance:
+    preferIpAddress: true
