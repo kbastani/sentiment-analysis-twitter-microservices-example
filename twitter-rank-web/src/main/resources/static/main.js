@@ -28,6 +28,7 @@ $(function () {
         var currentRank = rowData.currentRank == null ? "<i class='fa fa-plus'></i>" : rowData.currentRank + ".";
 
         row.append($("<td class='rank-col'>" + currentRank + "</td>"));
+        row.append($("<td class='rank-col'>" + rowData.discoveredRank + "</td>"));
         row.append($("<td><img src='" + rowData.profileImageUrl + "'/></td>"));
         row.append($("<td>" + rowData.name + "</td>"));
         row.append($("<td><a href='http://www.twitter.com/" + rowData.screenName + "' target='_blank'>@" + rowData.screenName + "</a></td>"));

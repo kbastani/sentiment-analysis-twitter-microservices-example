@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.social.twitter.api.Twitter;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Optional;
 
 /**
@@ -20,6 +22,7 @@ import java.util.Optional;
 @Service
 public class TwitterServiceImpl implements TwitterService {
 
+    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
     private final Log log = LogFactory.getLog(TwitterService.class);
     private static final String QUEUE_NAME = "twitter.profiles";
     private final Twitter twitter;
@@ -95,6 +98,15 @@ public class TwitterServiceImpl implements TwitterService {
         try {
             // Only crawl users that have manageable follows/follower counts
             if (user.getFollowerCount() < MAX_FOLLOWERS && user.getFollowsCount() < MAX_FOLLOWS) {
+                log.info("Discover user scheduled on follows graph " + dateFormat.format(new Date()));
+                user.setDiscoveredTime(new Date().getTime());
+
+                // Update discovery time
+                userRepository.save(user, 0);
+
+                // Update the discovery chain
+                userRepository.updateDiscoveryChain();
+
                 rabbitTemplate.convertAndSend(QUEUE_NAME, objectMapper.writeValueAsString(user));
             } else {
                 // Retry

@@ -74,4 +74,17 @@ public interface UserRepository extends GraphRepository<User> {
             "\tSET x.user.currentRank = x.currentRank\n" +
             "\tSET x.user.lastPageRank = x.user.pagerank)")
     void updateUserCurrentRank();
+
+    /**
+     * Updates a linked list of users in the order that they are discovered.
+     */
+    @Query("MATCH (user:User) WHERE has(user.discoveredTime)\n" +
+            "WITH user ORDER BY user.discoveredTime\n" +
+            "WITH collect(user) as users\n" +
+            "UNWIND range(0,size(users)-2) as idx\n" +
+            "WITH users[idx] AS s1, users[idx+1] AS s2, idx as n1\n" +
+            "MERGE (s1)-[:NEXT]->(s2)\n" +
+            "SET s1.discoveredRank = n1 + 1\n" +
+            "SET s2.discoveredRank = n1 + 2")
+    void updateDiscoveryChain();
 }

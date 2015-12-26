@@ -47,6 +47,8 @@ public class User implements Serializable {
     private Integer currentRank;
     private Float lastPageRank;
     private Boolean imported;
+    private Long discoveredTime;
+    private Integer discoveredRank;
 
     public User() {
     }
@@ -220,6 +222,22 @@ public class User implements Serializable {
         this.imported = imported;
     }
 
+    public Long getDiscoveredTime() {
+        return discoveredTime;
+    }
+
+    public void setDiscoveredTime(Long discoveredTime) {
+        this.discoveredTime = discoveredTime;
+    }
+
+    public Integer getDiscoveredRank() {
+        return discoveredRank;
+    }
+
+    public void setDiscoveredRank(Integer discoveredRank) {
+        this.discoveredRank = discoveredRank;
+    }
+
     @Override
     public String toString() {
         return "User{" +
@@ -241,6 +259,8 @@ public class User implements Serializable {
                 ", currentRank=" + currentRank +
                 ", lastPageRank=" + lastPageRank +
                 ", imported=" + imported +
+                ", discoveredTime=" + discoveredTime +
+                ", discoveredRank=" + discoveredRank +
                 '}';
     }
 }

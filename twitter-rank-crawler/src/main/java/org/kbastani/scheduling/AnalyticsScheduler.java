@@ -62,8 +62,6 @@ public class AnalyticsScheduler {
     @Scheduled(fixedRate = 60000)
     public void scheduleDiscoverUser() {
         if (!resetTimer) {
-            logger.info("Discover user scheduled on follows graph " + dateFormat.format(new Date()));
-
             // Use ranked users when possible
             User user = userRepository.findRankedUserToCrawl();
 
