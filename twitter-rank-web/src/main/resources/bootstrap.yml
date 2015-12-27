@@ -1,11 +1,10 @@
 spring.profiles.active: 'production'
 ---
 spring:
-  profiles: production
   application:
     name: twitter-rank-web
----
-spring:
-  profiles: development
-  application:
-    name: twitter-rank-web
+  cloud:
+    config:
+      uri: http://config:8888
+encrypt:
+  failOnError: false

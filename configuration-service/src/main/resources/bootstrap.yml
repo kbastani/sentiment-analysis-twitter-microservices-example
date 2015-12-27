@@ -1,0 +1,7 @@
+spring:
+  application:
+    name: configuration
+  profiles:
+    active: production
+encrypt:
+  failOnError: false

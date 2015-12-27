@@ -1,0 +1,6 @@
+spring:
+  application:
+    name: discovery
+  cloud:
+    config:
+      uri: ${CONFIG_SERVER_URL:http://config:8888}

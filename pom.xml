@@ -18,6 +18,8 @@
     <modules>
         <module>twitter-rank-crawler</module>
         <module>twitter-rank-web</module>
+        <module>discovery-service</module>
+        <module>configuration-service</module>
     </modules>
 
     <dependencyManagement>

@@ -1,9 +1,11 @@
 discovery:
-  image: kbastani/spring-discovery:latest
+  image: kbastani/twitter-discovery:latest
   ports:
    - "8761:8761"
+  links:
+   - config
 config:
-  image: kbastani/spring-config:latest
+  image: kbastani/twitter-configuration:latest
   ports:
    - "8888:8888"
 hdfs:

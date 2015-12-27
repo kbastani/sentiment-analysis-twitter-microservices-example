@@ -11,6 +11,10 @@ eureka:
       defaultZone: http://discovery:8761/eureka/
   instance:
     preferIpAddress: true
+    leaseRenewalIntervalInSeconds: 10
+    hostname: ${spring.cloud.client.ipAddress:HOSTNAME}
+    statusPageUrlPath: /info
+    healthCheckUrlPath: /health
 hystrix.command.default.execution.isolation.thread.timeoutInMilliseconds: 60000
 ribbon:
   ConnectTimeout: 3000
