@@ -1,23 +1,23 @@
 .fa-caret-up {
     color: green;
     text-shadow: 1px 1px 1px #ccc;
-    font-size: 1.75em;
+    font-size: 1.75em !important;
 }
 
 .fa-caret-down {
     color: red;
     text-shadow: 1px 1px 1px #ccc;
-    font-size: 1.75em;
+    font-size: 1.75em !important;
 }
 
 .fa-minus {
     color: #999;
     text-shadow: 1px 1px 1px #ccc;
-    font-size: 1em;
+    font-size: 1em !important;
 }
 
 .fa-plus {
-    font-size: 1em;
+    font-size: 1em !important;
     color: green;
     text-shadow: 1px 1px 1px #ccc;
 }
@@ -32,12 +32,14 @@
 }
 
 .loader {
-    position: absolute;
-    background: rgba(50, 50, 50, .75);
-    width: 100%;
+    background: rgba(50, 50, 50, 0.9) none repeat scroll 0 0;
     height: 100%;
-    vertical-align: middle;
     margin-bottom: 0;
+    position: fixed;
+    top: 0;
+    vertical-align: middle;
+    width: 100%;
+    z-index: 1040;
 }
 
 .glyphicon-exclamation-sign {

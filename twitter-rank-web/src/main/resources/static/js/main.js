@@ -5,7 +5,9 @@ $(function () {
         dataType: "json",
         success: function (data) {
             $(".loader").hide();
+
             drawTable(data._embedded.users);
+            drawDashboardHeader(data._embedded.users)
         },
         error: function (xhr, status) {
             $(".glyphicon-refresh")
@@ -21,6 +23,22 @@ $(function () {
         }
     }
 
+    function drawDashboardHeader(data) {
+
+        data.sort(function(a, b) {
+            return a.discoveredRank - b.discoveredRank;
+        });
+
+        for (var i = 0; i < 3; i++) {
+            drawSpotlight(data[i]);
+        }
+    }
+
+    function drawSpotlight(rowData) {
+        var row = $('<div class="col-sm-4 placeholder"><img src="' + rowData.profileImageUrl.replace("_normal", "") + '" class="img-responsive img-profile-dashboard" alt="Generic placeholder thumbnail"><h4 class="screen-name">@' + rowData.screenName + '</h4> <span class="text-muted full-name">' + rowData.name + '</span></div>')
+        $("#dashboard-header").append(row);
+    }
+
     function drawRow(rowData) {
         var row = $("<tr />")
         $("#personDataTable").append(row);
@@ -28,7 +46,7 @@ $(function () {
         var currentRank = rowData.currentRank == null ? "<i class='fa fa-plus'></i>" : rowData.currentRank + ".";
 
         row.append($("<td class='rank-col'>" + currentRank + "</td>"));
-        row.append($("<td class='rank-col'>" + rowData.discoveredRank + "</td>"));
+        // row.append($("<td class='rank-col'>" + rowData.discoveredRank + "</td>"));
         row.append($("<td><img src='" + rowData.profileImageUrl + "'/></td>"));
         row.append($("<td>" + rowData.name + "</td>"));
         row.append($("<td><a href='http://www.twitter.com/" + rowData.screenName + "' target='_blank'>@" + rowData.screenName + "</a></td>"));

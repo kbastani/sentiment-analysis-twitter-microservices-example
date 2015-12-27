@@ -5,6 +5,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.kbastani.scheduling.AnalyticsScheduler;
 import org.kbastani.twitter.*;
+import org.springframework.amqp.AmqpIllegalStateException;
 import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,16 +33,16 @@ public class Receiver {
 
     private final Log log = LogFactory.getLog(Receiver.class);
     private final ObjectMapper objectMapper;
-    private final AmqpTemplate ampqTemplate;
+    private final AmqpTemplate amqpTemplate;
     private final Twitter twitter;
     private final FollowsRepository followsRepository;
     private final TwitterService twitterService;
     private final UserRepository userRepository;
 
     @Autowired
-    public Receiver(ObjectMapper objectMapper, AmqpTemplate ampqTemplate, Twitter twitter, FollowsRepository followsRepository, TwitterService twitterService, UserRepository userRepository) {
+    public Receiver(ObjectMapper objectMapper, AmqpTemplate amqpTemplate, Twitter twitter, FollowsRepository followsRepository, TwitterService twitterService, UserRepository userRepository) {
         this.objectMapper = objectMapper;
-        this.ampqTemplate = ampqTemplate;
+        this.amqpTemplate = amqpTemplate;
         this.twitter = twitter;
         this.followsRepository = followsRepository;
         this.twitterService = twitterService;
@@ -57,11 +58,12 @@ public class Receiver {
     public void receiveMessage(String message) {
         User user = null;
 
+
         try {
             user = objectMapper.readValue(message, User.class);
 
             // Add messages for followers and follows
-            ampqTemplate.convertAndSend("twitter.followers", objectMapper.writeValueAsString(user));
+            amqpTemplate.convertAndSend("twitter.followers", objectMapper.writeValueAsString(user));
 
         } catch (IOException e) {
             log.error(e);
@@ -100,18 +102,20 @@ public class Receiver {
                     saveFollowers(user, followers);
                 }
 
-                ampqTemplate.convertAndSend("twitter.follows", objectMapper.writeValueAsString(user));
+                log.info(String.format("%s followers imported for user: %s", user.getFollowerCount(), user.getScreenName()));
+
+                amqpTemplate.convertAndSend("twitter.follows", objectMapper.writeValueAsString(user));
             } catch (RateLimitExceededException rateLimitException) {
                 AnalyticsScheduler.resetTimer = true;
                 Thread.sleep(40000L);
-                ampqTemplate.convertAndSend("twitter.followers", message);
+                log.info(String.format("Rate limit exceeded while importing followers for user: %s", user.getScreenName()));
+
+                // Throw AMQP exception and redeliver the message
+                throw new AmqpIllegalStateException(rateLimitException.getMessage());
             } catch (Exception ex) {
                 log.info(ex);
             }
         }
-
-
-        log.info(user);
     }
 
     /**
@@ -175,7 +179,7 @@ public class Receiver {
                     saveFollows(user, follows);
                 }
 
-                log.info(user);
+                log.info(String.format("%s friends imported for user: %s", user.getFollowsCount(), user.getScreenName()));
 
                 // Prepares the user to be ranked on the leader board
                 prepareUserForRanking(user);
@@ -197,7 +201,11 @@ public class Receiver {
         } catch (RateLimitExceededException rateLimitException) {
             AnalyticsScheduler.resetTimer = true;
             Thread.sleep(40000L);
-            ampqTemplate.convertAndSend("twitter.follows", message);
+
+            log.info(String.format("Rate limit exceeded while importing friends for user: %s", user.getScreenName()));
+
+            // Throw AMQP exception and redeliver the message
+            throw new AmqpIllegalStateException(rateLimitException.getMessage());
         } catch (Exception ex) {
             log.info(ex);
         }

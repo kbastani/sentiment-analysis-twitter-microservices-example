@@ -33,22 +33,22 @@ public class AnalyticsConfiguration {
 
     @Bean
     Queue profiles() {
-        return new Queue("twitter.profiles", true, true, true);
+        return new Queue("twitter.profiles", true, false, false);
     }
 
     @Bean
     Queue follows() {
-        return new Queue("twitter.follows", true, true, true);
+        return new Queue("twitter.follows", true, false, false);
     }
 
     @Bean
     Queue followers() {
-        return new Queue("twitter.followers", true, true, true);
+        return new Queue("twitter.followers", true, false, false);
     }
 
     @Bean
     TopicExchange exchange() {
-        return new TopicExchange("twitter.exchange", true, true);
+        return new TopicExchange("twitter.exchange", true, false);
     }
 
     @Bean
