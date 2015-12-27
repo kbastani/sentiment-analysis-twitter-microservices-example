@@ -55,6 +55,10 @@ public class TwitterServiceImpl implements TwitterService {
                 .map(User::new)
                 .get();
 
+        // Set the user's default values
+        user.setPagerank(0f);
+        user.setImported(true);
+
         user = getUser(user);
 
         return user;
@@ -87,13 +91,13 @@ public class TwitterServiceImpl implements TwitterService {
      * @return the saved {@link User} with full profile information now updated on the Neo4j node
      */
     private User getUser(User user) {
-        User savedUser = userRepository.findUserByProfileId(user.getProfileId());
+        Long userId = userRepository.getUserIdByProfileId(user.getProfileId());
 
-        if (savedUser != null) {
-            user.setId(savedUser.getId());
+        if (userId != null) {
+            user.setId(userId);
         }
 
-        user = userRepository.save(user, 1);
+        user = userRepository.save(user, 0);
 
         try {
             // Only crawl users that have manageable follows/follower counts

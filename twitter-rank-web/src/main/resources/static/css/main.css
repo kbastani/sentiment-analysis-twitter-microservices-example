@@ -22,6 +22,14 @@
     text-shadow: 1px 1px 1px #ccc;
 }
 
+.h1, h1 {
+    font-size: 26px;
+}
+
+.h2, h2 {
+    font-size: 24px;
+}
+
 .table > tbody > tr > td, .table > tbody > tr > th, .table > tfoot > tr > td, .table > tfoot > tr > th, .table > thead > tr > td, .table > thead > tr > th {
     vertical-align: middle;
 }
@@ -29,6 +37,10 @@
 .rank-col {
     text-align: center;
     font-weight: 400;
+}
+
+.add-profile {
+    padding: 1em;
 }
 
 .loader {
@@ -44,9 +56,10 @@
 
 .glyphicon-exclamation-sign {
     font-size: 2.5em;
-    color: darkred;
+    color: white;
     top: 50%;
     position: fixed;
+    text-shadow: 1px 1px 1px #555;
 }
 
 .glyphicon-refresh-animate {
@@ -61,16 +74,52 @@
 }
 
 @keyframes spin {
-    from { transform: scale(1) rotate(0deg);}
-    to { transform: scale(1) rotate(360deg);}
+    from {
+        transform: scale(1) rotate(0deg);
+    }
+    to {
+        transform: scale(1) rotate(360deg);
+    }
 }
 
 @-webkit-keyframes spinw {
-    from { -webkit-transform: rotate(0deg);}
-    to { -webkit-transform: rotate(360deg);}
+    from {
+        -webkit-transform: rotate(0deg);
+    }
+    to {
+        -webkit-transform: rotate(360deg);
+    }
 }
 
 @-moz-keyframes spinm {
-    from { -moz-transform: rotate(0deg);}
-    to { -moz-transform: rotate(360deg);}
+    from {
+        -moz-transform: rotate(0deg);
+    }
+    to {
+        -moz-transform: rotate(360deg);
+    }
+}
+
+@media (max-width: 768px) {
+    body {
+        font-size: 12px;
+    }
+
+    .h1, h1 {
+        font-size: 24px;
+    }
+
+    .h4, h4 {
+        font-size: 14px;
+    }
+
+    .h2, h2 {
+        font-size: 20px;
+    }
+}
+
+@media (max-width: 320px) {
+    body {
+        font-size: 14px;
+    }
 }

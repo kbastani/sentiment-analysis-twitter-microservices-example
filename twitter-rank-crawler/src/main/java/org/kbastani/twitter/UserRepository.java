@@ -17,6 +17,9 @@ public interface UserRepository extends GraphRepository<User> {
 
     User findUserByProfileId(Long profileId);
 
+    @Query("MATCH (user:User { profileId: {profileId} }) RETURN id(user) as id")
+    Long getUserIdByProfileId(@Param("profileId") Long profileId);
+
     @Query("FOREACH(x in {users} | MERGE (a:User { profileId: x.userA.profileId })\n" +
             "MERGE (b:User { profileId: x.userB.profileId })\n" +
             "MERGE (a)-[:FOLLOWS]->(b))")

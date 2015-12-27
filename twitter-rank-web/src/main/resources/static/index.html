@@ -7,9 +7,9 @@
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
     <meta name="description" content="">
     <meta name="author" content="">
-    <link rel="icon" href="http://getbootstrap.com/favicon.ico">
+    <link rel="icon" href="/favicon.ico">
 
-    <title>Dashboard Template for Bootstrap</title>
+    <title>Spring Boot - Twitter Discovery</title>
 
     <!-- Bootstrap core CSS -->
     <link href="dist/css/bootstrap.min.css" rel="stylesheet">
@@ -56,31 +56,62 @@
                 <li><a href="index.html#">GitHub</a></li>
                 <li><a href="index.html#">Help</a></li>
             </ul>
-            <form class="navbar-form navbar-right">
-                <input type="text" class="form-control" placeholder="Search...">
-            </form>
         </div>
     </div>
 </nav>
 
 <div class="container-fluid">
     <div class="row">
-        <div class="col-sm-3 col-md-2 sidebar">
-            <ul class="nav nav-sidebar">
-                <li class="active"><a href="index.html#">Overview <span class="sr-only">(current)</span></a></li>
-                <li><a href="index.html#">Crawler Status</a></li>
-                <li><a href="index.html#">Analytics</a></li>
-                <li><a href="index.html#">Info</a></li>
-            </ul>
-        </div>
-        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+        <div class="col-sm-12 col-md-12 main">
             <div class="section row">
-                <h1 class="page-header">Overview</h1>
-                <p class="text-muted">Community profiles are crawled and ranked automatically using these three Twitter
-                    profiles that were provided.</p>
+                <h1 class="page-header">Dashboard</h1>
+                <div role="alert" class="text-muted">
+                    <span aria-hidden="true" class="glyphicon glyphicon-info-sign" style=""></span>
+                    New Twitter profiles will be automatically discovered after you've added at least three users with
+                    mutual connections.
+                </div>
             </div>
             <div id="dashboard-header" class="row placeholders">
 
+            </div>
+
+            <div class="row placeholders add-profile">
+                <div class="col-md-12 text-center">
+                    <!-- Button trigger modal -->
+                    <button data-target="#myModal" data-toggle="modal" class="btn btn-primary btn-md" type="button">
+                        Add Twitter Profile
+                    </button>
+
+                    <!-- Modal -->
+                    <div aria-labelledby="myModalLabel" role="dialog" tabindex="-1" id="myModal" class="modal fade">
+                        <div role="document" class="modal-dialog">
+                            <form class="modal-content" id="add-profile-form">
+                                <div class="modal-header">
+                                    <button aria-label="Close" data-dismiss="modal" class="close" type="button"><span
+                                            aria-hidden="true">×</span></button>
+                                    <h4 id="myModalLabel" class="modal-title">Add Twitter Profile</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="form-inline">
+                                        <div class="form-group">
+                                            <label class="sr-only" for="twitterHandle">Twitter Handle</label>
+                                            <div class="input-group">
+                                                <div class="input-group-addon">@</div>
+                                                <input type="text" class="form-control" name="twitterHandle"
+                                                       id="twitterHandle" placeholder="Twitter Handle">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button data-dismiss="modal" class="btn btn-default" type="button">Close</button>
+                                    <button type="submit" id="crawlTwitterProfile" class="btn btn-primary">Crawl
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <div class="section row">
@@ -95,12 +126,12 @@
                         <tr>
                             <th>Rank</th>
                             <th>Photo</th>
-                            <th>Name</th>
+                            <th class="hidden-xs">Name</th>
                             <th>Profile</th>
-                            <th>Following</th>
-                            <th>Followers</th>
-                            <th>PageRank</th>
-                            <th>Change</th>
+                            <th class="hidden-xs">Following</th>
+                            <th class="hidden-xs">Followers</th>
+                            <th class="hidden-xs">PageRank</th>
+                            <th class="hidden-xs">Change</th>
                         </tr>
                         </thead>
                         <tbody id="personDataTable"></tbody>
@@ -117,6 +148,7 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 <script>window.jQuery || document.write('<script src="assets/js/vendor/jquery.min.js"><\/script>')</script>
 <script src="dist/js/bootstrap.min.js"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/bootstrap-validator/0.4.5/js/bootstrapvalidator.min.js"></script>
 <script src="js/main.js"></script>
 <!-- Just to make our placeholder images work. Don't actually copy the next line! -->
 <script src="assets/js/vendor/holder.min.js"></script>
