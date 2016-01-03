@@ -5,7 +5,6 @@ import org.apache.commons.logging.LogFactory;
 import org.neo4j.ogm.session.Neo4jSession;
 import org.neo4j.ogm.session.transaction.Transaction;
 import org.springframework.amqp.core.Queue;
-import org.springframework.amqp.core.TopicExchange;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.context.embedded.EmbeddedServletContainerFactory;
@@ -22,9 +21,9 @@ import org.springframework.social.twitter.api.impl.TwitterTemplate;
  * @author kbastani
  */
 @Configuration
-public class AnalyticsConfiguration {
+public class TwitterCrawlerConfig {
 
-    private final Log logger = LogFactory.getLog(AnalyticsConfiguration.class);
+    private final Log logger = LogFactory.getLog(TwitterCrawlerConfig.class);
 
     @Bean
     public EmbeddedServletContainerFactory servletContainer() {
