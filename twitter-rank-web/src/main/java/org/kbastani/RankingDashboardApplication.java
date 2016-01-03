@@ -6,10 +6,8 @@ import org.springframework.cloud.netflix.zuul.EnableZuulProxy;
 
 @SpringCloudApplication
 @EnableZuulProxy
-public class TwitterRankWebApplication {
-
+public class RankingDashboardApplication {
     public static void main(String[] args) {
-        SpringApplication.run(TwitterRankWebApplication.class, args);
+        SpringApplication.run(RankingDashboardApplication.class, args);
     }
-
 }
