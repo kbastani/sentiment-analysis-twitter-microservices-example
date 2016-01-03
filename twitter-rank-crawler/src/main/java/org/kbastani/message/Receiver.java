@@ -50,29 +50,6 @@ public class Receiver {
     }
 
     /**
-     * Receives a message containing a Twitter user that will have their follows/followers graph imported to Neo4j
-     *
-     * @param message is a message containing information about the user profile that should be imported
-     */
-    @RabbitListener(queues = {"twitter.profiles"})
-    public void receiveMessage(String message) {
-        User user = null;
-
-
-        try {
-            user = objectMapper.readValue(message, User.class);
-
-            // Add messages for followers and follows
-            amqpTemplate.convertAndSend("twitter.followers", objectMapper.writeValueAsString(user));
-
-        } catch (IOException e) {
-            log.error(e);
-        }
-
-        log.info(user);
-    }
-
-    /**
      * Receives a message containing a user profile that should have their followers imported into Neo4j.
      * On successful completion, a message is sent to the next queue to import the users that this profile
      * follows.
@@ -80,25 +57,22 @@ public class Receiver {
      * @param message is the message containing information about the user profile
      */
     @RabbitListener(queues = {"twitter.followers"})
-    public void followers(String message) throws InterruptedException {
-        User user = null;
+    public void followers(String message) throws InterruptedException, IOException {
 
-        try {
-            user = objectMapper.readValue(message, User.class);
-        } catch (IOException e) {
-            log.error(e);
-        }
+        User user = objectMapper.readValue(message, User.class);
 
         if (user != null) {
             try {
                 // Iterate through cursors and import to graph database
-                CursoredList<Long> followers = twitter.friendOperations().getFollowerIds(user.getProfileId());
+                CursoredList<Long> followers = twitter.friendOperations()
+                        .getFollowerIds(user.getProfileId());
 
                 saveFollowers(user, followers);
 
                 while (followers.hasNext()) {
                     Long cursor = followers.getNextCursor();
-                    followers = twitter.friendOperations().getFollowerIdsInCursor(user.getProfileId(), cursor);
+                    followers = twitter.friendOperations()
+                            .getFollowerIdsInCursor(user.getProfileId(), cursor);
                     saveFollowers(user, followers);
                 }
 

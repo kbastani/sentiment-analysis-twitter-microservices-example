@@ -13,6 +13,12 @@ import java.util.Set;
 @RepositoryRestResource(collectionResourceRel = "following", itemResourceRel = "following", path = "following")
 public interface FollowsRepository extends GraphRepository<Follows> {
 
+    /**
+     * Efficiently batches the creation of many FOLLOWS relationships
+     * between {@link User} nodes
+     *
+     * @param follows a set of relationship entities containing a user "A" who follows a user "B"
+     */
     @Query("FOREACH(x in {follows} | MERGE (a:User { profileId: x.userA.profileId })\n" +
             "MERGE (b:User { profileId: x.userB.profileId })\n" +
             "MERGE (a)-[:FOLLOWS]->(b))")

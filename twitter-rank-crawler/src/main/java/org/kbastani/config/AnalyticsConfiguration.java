@@ -32,11 +32,6 @@ public class AnalyticsConfiguration {
     }
 
     @Bean
-    Queue profiles() {
-        return new Queue("twitter.profiles", true, false, false);
-    }
-
-    @Bean
     Queue follows() {
         return new Queue("twitter.follows", true, false, false);
     }
@@ -46,16 +41,29 @@ public class AnalyticsConfiguration {
         return new Queue("twitter.followers", true, false, false);
     }
 
-    @Bean
-    TopicExchange exchange() {
-        return new TopicExchange("twitter.exchange", true, false);
-    }
+    @Value("${spring.social.twitter.appId}")
+    private String appId;
+
+    @Value("${spring.social.twitter.appSecret}")
+    private String appSecret;
+
+    @Value("${spring.social.twitter.accessToken}")
+    private String accessToken;
+
+    @Value("${spring.social.twitter.accessTokenSecret}")
+    private String accessTokenSecret;
 
     @Bean
     Twitter twitter(final @Value("${spring.social.twitter.appId}") String appId,
                     final @Value("${spring.social.twitter.appSecret}") String appSecret,
                     final @Value("${spring.social.twitter.accessToken}") String accessToken,
                     final @Value("${spring.social.twitter.accessTokenSecret}") String accessTokenSecret) {
+        return new TwitterTemplate(appId, appSecret, accessToken, accessTokenSecret);
+    }
+
+
+    Twitter twitters(String appId, String appSecret,
+                     String accessToken, String accessTokenSecret) {
         return new TwitterTemplate(appId, appSecret, accessToken, accessTokenSecret);
     }
 

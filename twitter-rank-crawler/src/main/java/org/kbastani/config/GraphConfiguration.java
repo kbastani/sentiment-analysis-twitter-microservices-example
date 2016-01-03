@@ -1,5 +1,7 @@
 package org.kbastani.config;
 
+import org.kbastani.twitter.FollowsRepository;
+import org.kbastani.twitter.UserRepository;
 import org.neo4j.ogm.session.SessionFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -15,7 +17,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  *
  * @author Kenny Bastani
  */
-@EnableNeo4jRepositories(basePackages = "org.kbastani")
+@EnableNeo4jRepositories(basePackageClasses = {FollowsRepository.class, UserRepository.class})
 @EnableTransactionManagement
 @Configuration
 public class GraphConfiguration extends Neo4jConfiguration {
@@ -33,7 +35,7 @@ public class GraphConfiguration extends Neo4jConfiguration {
 
     @Bean
     public SessionFactory getSessionFactory() {
-        return new SessionFactory("org.kbastani.twitter");
+        return new SessionFactory(UserRepository.class.getPackage().getName());
     }
 
 }

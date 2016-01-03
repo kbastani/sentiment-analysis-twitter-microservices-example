@@ -15,10 +15,10 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @SpringCloudApplication
 @EnableZuulProxy
 @EnableScheduling
-public class TwitterAnalyticsApplication extends SpringBootServletInitializer {
+public class TwitterCrawlerApplication extends SpringBootServletInitializer {
 
     public static void main(String[] args) {
-        new SpringApplicationBuilder(TwitterAnalyticsApplication.class).web(true).run(args);
+        new SpringApplicationBuilder(TwitterCrawlerApplication.class).web(true).run(args);
     }
 
 }

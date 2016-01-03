@@ -26,6 +26,7 @@ import java.util.Date;
 public class AnalyticsScheduler {
 
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
+    private static final String PAGERANK_JOB_URL = "%s/service/mazerunner/analysis/pagerank/FOLLOWS";
     private final Log logger = LogFactory.getLog(AnalyticsScheduler.class);
     private final RestTemplate restTemplate;
     private final Neo4jServer neo4jServer;
@@ -49,8 +50,8 @@ public class AnalyticsScheduler {
         logger.info("PageRank scheduled on follows graph " + dateFormat.format(new Date()));
 
         if (userRepository.findNextUserToCrawl() != null) {
-            // Schedule a PageRank job with Neo4j's Mazerunnner service
-            restTemplate.getForEntity(String.format("%s/service/mazerunner/analysis/pagerank/FOLLOWS", neo4jServer.url()), null);
+            String jobUrl = String.format(PAGERANK_JOB_URL, neo4jServer.url());
+            restTemplate.getForEntity(jobUrl, null);
         }
     }
 

@@ -24,15 +24,15 @@ public class TwitterServiceImpl implements TwitterService {
 
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
     private final Log log = LogFactory.getLog(TwitterService.class);
-    private static final String QUEUE_NAME = "twitter.profiles";
+    private static final String QUEUE_NAME = "twitter.followers";
     private final Twitter twitter;
     private final UserRepository userRepository;
     private final RabbitTemplate rabbitTemplate;
     private final ObjectMapper objectMapper;
 
     // These two fields are constants that target users below follows/following thresholds
-    private final Integer MAX_FOLLOWS = 50000;
-    private final Integer MAX_FOLLOWERS = 50000;
+    private static final Integer MAX_FOLLOWS = 50000;
+    private static final Integer MAX_FOLLOWERS = 50000;
 
     @Autowired
     public TwitterServiceImpl(Twitter twitter, UserRepository userRepository, RabbitTemplate rabbitTemplate, ObjectMapper objectMapper) {
