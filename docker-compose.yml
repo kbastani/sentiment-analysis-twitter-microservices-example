@@ -1,21 +1,26 @@
 discovery:
+  container_name: discovery
   image: kbastani/twitter-discovery:latest
   ports:
    - "8761:8761"
   links:
    - config
 config:
+  container_name: config
   image: kbastani/twitter-configuration:latest
   ports:
    - "8888:8888"
 hdfs:
+  container_name: hdfs
   image: sequenceiq/hadoop-docker:2.4.1
   command: /etc/bootstrap.sh -d -bash
 mazerunner:
+  container_name: mazerunner
   image: kbastani/neo4j-graph-analytics:latest
   links:
    - hdfs
 graphdb:
+  container_name: graphdb
   image: kbastani/docker-neo4j:latest
   ports:
    - "7474:7474"
@@ -26,8 +31,10 @@ graphdb:
    - mazerunner
    - hdfs
 rabbit:
+  container_name: rabbit
   image: rabbitmq:3
 twitter-rank-web:
+  container_name: dashboard
   image: kbastani/twitter-rank-web:latest
   ports:
    - "8081:8081"
@@ -37,6 +44,7 @@ twitter-rank-web:
   environment:
     SPRING_PROFILES_ACTIVE: "production"
 twitter-rank-crawler:
+  container_name: crawler
   image: kbastani/twitter-rank-crawler:latest
   ports:
    - "8080:8080"
@@ -51,3 +59,16 @@ twitter-rank-crawler:
     SPRING_SOCIAL_TWITTER_APPSECRET: "REPLACE"
     SPRING_SOCIAL_TWITTER_APPID: "REPLACE"
     SPRING_PROFILES_ACTIVE: "production"
+scope:
+  container_name: weave-scope
+  volumes:
+    - "/var/run/:/var/run:rw"
+  command:
+    - "--probe.docker"
+    - "true"
+  image: weaveworks/scope:0.11.1
+  net: "host"
+  pid: "host"
+  ports:
+    - "4040:4040"
+  privileged: true
