@@ -13,7 +13,8 @@ cache:
     - $HOME/.m2/repository/
 
 install:
-  - ./integration-test/integration-test.sh
+  - git clone https://github.com/kbastani/spring-boot-graph-processing-example.git build
+  - ./build/integration-test/integration-test.sh
 
 script:
-  - ./integration-test/build.sh
+  - ./build/integration-test/build.sh
