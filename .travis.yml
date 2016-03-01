@@ -14,3 +14,6 @@ cache:
 
 script:
   - ./integration-test/integration-test.sh
+
+script:
+  - ./integration-test/build.sh

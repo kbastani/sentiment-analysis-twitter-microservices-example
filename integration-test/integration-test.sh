@@ -48,6 +48,7 @@ function health_check() {
       sleep 1
     done
 }
+
 function compose() {
     scp -i $INSTALL_PATH/aws-volume/$PROJECT_NAME.pem -o StrictHostKeyChecking=no $INSTALL_PATH/docker-compose.yml ec2-user@$PUBLIC_IP:/home/ec2-user
 
@@ -68,15 +69,3 @@ for i in "${ports[@]}"
 do
    health_check "$i"
 done
-
-set -e
-
-export SPRING_NEO4J_HOST=$PUBLIC_IP
-export SPRING_RABBITMQ_HOST=$PUBLIC_IP
-export EUREKA_CLIENT_SERVICEURL_DEFAULTZONE="http://$PUBLIC_IP:8761/eureka/"
-export SPRING_CLOUD_CONFIG_URI="http://$PUBLIC_IP:8888"
-
-# Run tests and tear down
-mvn clean install || tearDown || die "'mvn clean install' failed" 1
-
-tearDown
