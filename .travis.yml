@@ -14,7 +14,7 @@ cache:
 
 install:
   - git clone https://github.com/kbastani/spring-boot-graph-processing-example.git build
-  - ./build/integration-test/integration-test.sh
+  - sudo ./build/integration-test/integration-test.sh
 
 script:
-  - ./build/integration-test/build.sh
+  - sudo ./build/integration-test/build.sh
