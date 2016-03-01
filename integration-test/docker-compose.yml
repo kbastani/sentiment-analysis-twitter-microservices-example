@@ -1,0 +1,37 @@
+discovery:
+  container_name: discovery
+  image: kbastani/twitter-discovery:latest
+  ports:
+   - "8761:8761"
+  links:
+   - config
+config:
+  container_name: config
+  image: kbastani/twitter-configuration:latest
+  ports:
+   - "8888:8888"
+hdfs:
+  container_name: hdfs
+  image: sequenceiq/hadoop-docker:2.4.1
+  command: /etc/bootstrap.sh -d -bash
+mazerunner:
+  container_name: mazerunner
+  image: kbastani/neo4j-graph-analytics:latest
+  links:
+   - hdfs
+graphdb:
+  container_name: graphdb
+  image: kbastani/docker-neo4j:latest
+  ports:
+   - "7474:7474"
+   - "1337:1337"
+  volumes:
+   - /opt/data
+  links:
+   - mazerunner
+   - hdfs
+rabbit:
+  container_name: rabbit
+  image: rabbitmq:3
+  ports:
+   - "5672:5672"

@@ -20,11 +20,6 @@ public interface UserRepository extends GraphRepository<User> {
     @Query("MATCH (user:User { profileId: {profileId} }) RETURN id(user) as id")
     Long getUserIdByProfileId(@Param("profileId") Long profileId);
 
-    @Query("FOREACH(x in {users} | MERGE (a:User { profileId: x.userA.profileId })\n" +
-            "MERGE (b:User { profileId: x.userB.profileId })\n" +
-            "MERGE (a)-[:FOLLOWS]->(b))")
-    Set<User> saveUsers(@Param("users") Set<User> users);
-
     @Query("MATCH (user:User) WHERE has(user.pagerank) AND has(user.screenName) AND coalesce(user.imported, false) = true\n" +
             "WITH user\n" +
             "ORDER BY user.pagerank DESC\n" +

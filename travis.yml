@@ -1,0 +1,16 @@
+language: java
+
+sudo: required
+
+services:
+  - docker
+
+jdk:
+  - oraclejdk8
+
+cache:
+  directories:
+    - $HOME/.m2/repository/
+
+script:
+  - ./integration-test/integration-test.sh
