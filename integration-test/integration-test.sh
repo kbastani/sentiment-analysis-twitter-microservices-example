@@ -63,6 +63,7 @@ setup
 export PUBLIC_IP="$(cat $(pwd -P)/integration-test/aws-volume/public_ip | sed 's/\( -\)//1')"
 
 compose "up -d"
+
 declare -a ports=("7474" "8761/health" "8888/admin/health")
 # Do health checks on compose services
 for i in "${ports[@]}"

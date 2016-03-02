@@ -9,6 +9,8 @@ import org.springframework.boot.test.SpringApplicationConfiguration;
 import org.springframework.boot.test.TestRestTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.annotation.IfProfileValue;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
@@ -18,12 +20,14 @@ import static org.junit.Assert.assertEquals;
 @SpringApplicationConfiguration(classes = TwitterCrawlerApplication.class)
 @WebAppConfiguration
 @IntegrationTest("server.port=0")
+@ActiveProfiles("test")
 public class TwitterCrawlerTests {
 
     @Value("${local.server.port}")
     private int port = 0;
 
     @Test
+    @IfProfileValue(name = "test")
     public void crawlUser() {
         ResponseEntity<User> user1 = new TestRestTemplate().getForEntity("http://localhost:" + port + "/v1/user/kennybastani", User.class);
         assertEquals(HttpStatus.OK, user1.getStatusCode());

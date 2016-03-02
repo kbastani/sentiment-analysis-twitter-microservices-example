@@ -63,3 +63,32 @@ eureka:
       defaultZone: http://localhost:8761/eureka/
   instance:
     preferIpAddress: true
+---
+server:
+  port: 8080
+  servletPath: /
+spring:
+  neo4j:
+    port: 7474
+    host: '192.168.99.100'
+  rabbitmq:
+    port: 5672
+    host: 'localhost'
+    username: guest
+    password: guest
+    listener:
+      max-concurrency: 1
+      prefetch: 1
+      acknowledge-mode: auto
+      auto-startup: true
+    dynamic: true
+  social:
+    twitter:
+      accessTokenSecret: 'replace'
+      accessToken: 'replace'
+      appSecret: 'replace'
+      appId: 'replace'
+  profiles: 'test'
+eureka:
+  client:
+    enabled: false

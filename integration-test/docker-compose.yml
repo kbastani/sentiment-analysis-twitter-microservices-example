@@ -33,5 +33,29 @@ graphdb:
 rabbit:
   container_name: rabbit
   image: rabbitmq:3
+twitter-rank-web:
+  container_name: dashboard
+  image: kbastani/twitter-rank-web:latest
   ports:
-   - "5672:5672"
+   - "8081:8081"
+  links:
+   - config
+   - discovery
+  environment:
+    SPRING_PROFILES_ACTIVE: "production"
+twitter-rank-crawler:
+  container_name: crawler
+  image: kbastani/twitter-rank-crawler:latest
+  ports:
+   - "8080:8080"
+  links:
+   - config
+   - discovery
+   - rabbit
+   - graphdb
+  environment:
+    SPRING_SOCIAL_TWITTER_ACCESSTOKENSECRET: "replace"
+    SPRING_SOCIAL_TWITTER_ACCESSTOKEN: "replace"
+    SPRING_SOCIAL_TWITTER_APPSECRET: "replace"
+    SPRING_SOCIAL_TWITTER_APPID: "replace"
+    SPRING_PROFILES_ACTIVE: "production"
