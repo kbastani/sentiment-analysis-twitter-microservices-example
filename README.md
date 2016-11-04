@@ -37,6 +37,14 @@ We can see from the diagram that new job requests are sent from Neo4j to RabbitM
 
 After the analysis service has completed execution of a job, it sends a message to RabbitMQ that will be received by a listener on Neo4j. The message will contain a path on HDFS of the resulting graph that was saved by the analysis service. Neo4j will then import the results from HDFS back into the database without interrupting or impacting transactions that are being made by other database clients.
 
+## How to get it up and running 
+
+- Check out consumerKey and accessToken at [Twitter developer site](https://dev.twitter.com)
+- Fill out Twitter properties on ```docker-compose.yml```
+- If you are running it on a macOS system, reminder to change the fixed IPs in 
+all ```application.yml``` files for ```192.168.99.100```, that is the default for docker-machine in the macOS
+- Run the ```docker-compose up``` in your terminal console
+
 ## License
 
 This library is licensed under the Apache License, Version 2.0.
