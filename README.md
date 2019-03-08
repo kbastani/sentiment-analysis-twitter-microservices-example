@@ -47,4 +47,4 @@ all ```application.yml``` files for ```192.168.99.100```, that is the default fo
 
 ## License
 
-This library is licensed under the Apache License, Version 2.0.
+This library is an open source product licensed under GPLv3.
