@@ -61,7 +61,8 @@ To be able to run the example, you'll need to provide API authorization for both
 - Check out GCP token authorization file at [GCP developer documentation](https://cloud.google.com/docs/authentication/production)
 - Fill out Twitter properties on `docker-compose.yaml`
 - Add your GCP authorization to `twitter-rank-crawler/credentials.json`
-- Please do not check-in your secrets to GitHub!
+ - _Please do not check-in your private secrets to public GitHub!_
+- Run `mvn clean install -DskipTests` in your terminal with Docker running
 - Run `docker-compose up` in your terminal console
 
 ## License
