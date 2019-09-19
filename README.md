@@ -8,7 +8,7 @@ This repository is actively being worked on and has not yet transformed into its
 
 The diagram below shows each component and microservice as a part of this sample application. The connections are communication points between each service, describing what protocol is used.
 
-![Twitter Crawler Architecture Diagram](/users/user/documents/apps/spring-boot-graph-processing-example/twitter_analytics_v2_reactive-2.png)
+![Twitter Crawler Architecture Diagram](https://i.imgur.com/Jp4I1tp.png)
 
 The two Spring Boot applications that are colored in blue are stateless services. Stateless services will not attach a persistent backing service or need to worry about managing state locally.
 
@@ -38,19 +38,19 @@ Neo4j is a graph database that includes graph processing algorithms from a commu
 
 The graph data model in Neo4j will be created using the following diagram.
 
-![Twitter Graph Data Model](/users/user/documents/apps/spring-boot-graph-processing-example/twitter-graph-6.png)
+![Twitter Graph Data Model](https://i.imgur.com/U1eK3vi.png)
 
 ### Sentiment Analysis
 
 When Twitter data is imported, a user's tweets will be analyzed using the GCP Natural Language API.
 
-![Twitter Graph Data Model](/users/user/documents/apps/spring-boot-graph-processing-example/twitter-graph-path-5.png)
+![Twitter Graph Data Model](https://i.imgur.com/LkdSk6p.png)
 
 ### Category
 
 Categories will be inferred over time by analyzing the top ranked phrases and submitting the group of tweets as a document to GCP's classification API.
 
-![Twitter Graph Example Model](/users/user/documents/apps/spring-boot-graph-processing-example/twitter-graph-example-5.png)
+![Twitter Graph Example Model](https://i.imgur.com/6yJTJuE.png)
 
 
 ## External APIs
