@@ -1,9 +1,6 @@
 server:
   port: 8888
 
-management:
-  context-path: /admin
-
 logging:
   level:
     com.netflix.discovery: 'OFF'

@@ -1,7 +1,6 @@
 package org.kbastani;
 
 import org.springframework.boot.builder.SpringApplicationBuilder;
-import org.springframework.boot.context.web.SpringBootServletInitializer;
 import org.springframework.cloud.client.SpringCloudApplication;
 import org.springframework.cloud.netflix.zuul.EnableZuulProxy;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -15,10 +14,10 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @SpringCloudApplication
 @EnableZuulProxy
 @EnableScheduling
-public class TwitterCrawlerApplication extends SpringBootServletInitializer {
+public class TwitterCrawlerApplication {
 
     public static void main(String[] args) {
-        new SpringApplicationBuilder(TwitterCrawlerApplication.class).web(true).run(args);
+        new SpringApplicationBuilder(TwitterCrawlerApplication.class).run(args);
     }
 
 }

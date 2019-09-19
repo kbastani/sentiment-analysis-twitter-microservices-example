@@ -1,4 +1,4 @@
-package org.kbastani.twitter;
+package org.kbastani.user;
 
 import org.neo4j.ogm.annotation.*;
 
@@ -10,8 +10,9 @@ import org.neo4j.ogm.annotation.*;
 @RelationshipEntity(type = "FOLLOWS")
 public class Follows {
 
-    @GraphId
-    private Long relationshipId;
+    @Id
+    @GeneratedValue
+    private Long id;
     @StartNode
     private User userA;
     @EndNode
@@ -25,12 +26,12 @@ public class Follows {
     public Follows() {
     }
 
-    public Long getRelationshipId() {
-        return relationshipId;
+    public Long getId() {
+        return id;
     }
 
-    public void setRelationshipId(Long relationshipId) {
-        this.relationshipId = relationshipId;
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public User getUserA() {
@@ -52,7 +53,7 @@ public class Follows {
     @Override
     public String toString() {
         return "Follows{" +
-                "relationshipId=" + relationshipId +
+                "id=" + id +
                 ", userA=" + userA +
                 ", userB=" + userB +
                 '}';

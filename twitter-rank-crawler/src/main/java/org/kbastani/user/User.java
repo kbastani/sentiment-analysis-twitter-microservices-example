@@ -1,10 +1,6 @@
-package org.kbastani.twitter;
+package org.kbastani.user;
 
-import org.neo4j.ogm.annotation.GraphId;
-import org.neo4j.ogm.annotation.Index;
-import org.neo4j.ogm.annotation.NodeEntity;
-import org.neo4j.ogm.annotation.Relationship;
-import org.springframework.social.twitter.api.TwitterProfile;
+import org.neo4j.ogm.annotation.*;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -14,14 +10,15 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * This is the {@link User} domain class that represents a Twitter profile as a Neo4j node
+ * This is the {@link User} domain class that represents a Twitter profile as a Neo4j node.
  *
  * @author kbastani
  */
 @NodeEntity
 public class User implements Serializable {
 
-    @GraphId
+    @Id
+    @GeneratedValue
     private Long id;
 
     @Index(unique = true)
@@ -49,6 +46,11 @@ public class User implements Serializable {
     private Boolean imported;
     private Long discoveredTime;
     private Integer discoveredRank;
+    private Long lastActivityScan;
+    private Long lastImportedTweetId;
+    private Double averageSentiment;
+    private Double stdSentiment;
+    private Double cumulativeSentiment;
 
     public User() {
     }
@@ -65,15 +67,15 @@ public class User implements Serializable {
         this.follows = this.follows.stream().distinct().collect(Collectors.toSet());
     }
 
-    public User(TwitterProfile twitterProfile) {
+    public User(twitter4j.User twitterProfile) {
         this.profileId = twitterProfile.getId();
-        this.createdDate = twitterProfile.getCreatedDate();
+        this.createdDate = twitterProfile.getCreatedAt();
         this.screenName = twitterProfile.getScreenName();
         this.name = twitterProfile.getName();
-        this.url = twitterProfile.getUrl();
+        this.url = twitterProfile.getURL();
         this.description = twitterProfile.getDescription();
         this.location = twitterProfile.getLocation();
-        this.profileImageUrl = twitterProfile.getProfileImageUrl();
+        this.profileImageUrl = twitterProfile.getProfileImageURL();
         this.followerCount = twitterProfile.getFollowersCount();
         this.followsCount = twitterProfile.getFriendsCount();
     }
@@ -238,6 +240,46 @@ public class User implements Serializable {
         this.discoveredRank = discoveredRank;
     }
 
+    public Long getLastActivityScan() {
+        return lastActivityScan;
+    }
+
+    public void setLastActivityScan(Long lastActivityScan) {
+        this.lastActivityScan = lastActivityScan;
+    }
+
+    public Long getLastImportedTweetId() {
+        return lastImportedTweetId;
+    }
+
+    public void setLastImportedTweetId(Long lastImportedTweetId) {
+        this.lastImportedTweetId = lastImportedTweetId;
+    }
+
+    public Double getAverageSentiment() {
+        return averageSentiment;
+    }
+
+    public void setAverageSentiment(Double averageSentiment) {
+        this.averageSentiment = averageSentiment;
+    }
+
+    public Double getStdSentiment() {
+        return stdSentiment;
+    }
+
+    public void setStdSentiment(Double stdSentiment) {
+        this.stdSentiment = stdSentiment;
+    }
+
+    public Double getCumulativeSentiment() {
+        return cumulativeSentiment;
+    }
+
+    public void setCumulativeSentiment(Double cumulativeSentiment) {
+        this.cumulativeSentiment = cumulativeSentiment;
+    }
+
     @Override
     public String toString() {
         return "User{" +
@@ -261,6 +303,11 @@ public class User implements Serializable {
                 ", imported=" + imported +
                 ", discoveredTime=" + discoveredTime +
                 ", discoveredRank=" + discoveredRank +
+                ", lastActivityScan=" + lastActivityScan +
+                ", lastImportedTweetId=" + lastImportedTweetId +
+                ", averageSentiment=" + averageSentiment +
+                ", stdSentiment=" + stdSentiment +
+                ", cumulativeSentiment=" + cumulativeSentiment +
                 '}';
     }
 }

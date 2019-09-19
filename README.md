@@ -1,50 +1,69 @@
-# Spring Boot Graph Processing Example
+# Sentiment Analysis Twitter Microservices Example
 
-A sample application that demonstrates how to build a graph processing platform to create a ranking dashboard of influential Twitter profiles. [A guided tutorial](http://www.kennybastani.com) is provided with this sample project.
+A sample application that demonstrates how to build a graph processing platform to analyze sources of emotional influence on Twitter. [A guided tutorial](http://www.kennybastani.com) is provided with this sample project.
+
+This repository is actively being worked on and has not yet transformed into its final state. Please check back periodically to see updates. If you have trouble running the example, please post to the issue tracker.
 
 ## Architecture
 
 The diagram below shows each component and microservice as a part of this sample application. The connections are communication points between each service, describing what protocol is used.
 
+![Twitter Crawler Architecture Diagram](/users/user/documents/apps/spring-boot-graph-processing-example/twitter_analytics_v2_reactive-2.png)
 
-![Twitter Crawler Architecture Diagram](http://i.imgur.com/Efdhofo.png)
+The two Spring Boot applications that are colored in blue are stateless services. Stateless services will not attach a persistent backing service or need to worry about managing state locally.
 
+The Spring Boot application that is colored in green is the _Twitter Crawler_ service. Components that are colored in green will typically have an attached backing service. These backing services are responsible for managing state locally, and will either persist state to disk or in-memory.
 
-The three Spring Boot applications that are colored in blue are stateless services. Stateless services will not attach a persistent backing service or need to worry about managing state locally. The Spring Boot application that is colored in green is the _Twitter Crawler_ service. Components that are colored in green will typically have an attached backing service. These backing services are responsible for managing state locally, and will either persist state to disk or in-memory.
+The services colored in red are external APIs that are used to collect data and to run sentiment analysis and other natural language machine learning algorithms.
 
 ### Spring Boot Services
 
-- Ranking Dashboard
+- Rank Dashboard
 - Discovery Service
 - Configuration Service
 - Twitter Crawler
 
 ### Backing Services
 
-- Neo4j (GraphDB)
-- Hadoop (HDFS)
-- Analysis Service (Apache Spark)
+- Neo4j (BOLT)
 - RabbitMQ (AMQP)
 - Twitter API (HTTP)
+- Google Cloud Language API (HTTP)
 
 ## Graph Processing Platform
 
-The diagram below details the graph processing platform that is used in this sample project. This diagram is based on [Neo4j Mazerunner](http://www.github.com/neo4j-contrib/neo4j-mazerunner).
+Neo4j is a graph database that includes graph processing algorithms from a community plugin called [APOC](https://neo4j.com/developer/graph-algorithms/).
 
-![Graph Processing Platform](http://i.imgur.com/VuQhIG8.png)
+## Graph Data Model
 
-We can see from the diagram that new job requests are sent from Neo4j to RabbitMQ. Before Neo4j sends a message to RabbitMQ requesting a new job, it will export a graph replica to HDFS. The analysis service, which is the hexagon that is colored in purple, has an embedded standalone instance of Apache Spark, and will listen for messages from RabbitMQ containing new job requests. Each message that is received by the analysis service contains information about where the exported graph replica is stored on HDFS and what graph algorithm to execute.
+The graph data model in Neo4j will be created using the following diagram.
 
-After the analysis service has completed execution of a job, it sends a message to RabbitMQ that will be received by a listener on Neo4j. The message will contain a path on HDFS of the resulting graph that was saved by the analysis service. Neo4j will then import the results from HDFS back into the database without interrupting or impacting transactions that are being made by other database clients.
+![Twitter Graph Data Model](/users/user/documents/apps/spring-boot-graph-processing-example/twitter-graph-6.png)
 
-## How to get it up and running 
+### Sentiment Analysis
 
-- Check out consumerKey and accessToken at [Twitter developer site](https://dev.twitter.com)
-- Fill out Twitter properties on ```docker-compose.yml```
-- If you are running it on a macOS system, reminder to change the fixed IPs in 
-all ```application.yml``` files for ```192.168.99.100```, that is the default for docker-machine in the macOS
-- Run the ```docker-compose up``` in your terminal console
+When Twitter data is imported, a user's tweets will be analyzed using the GCP Natural Language API.
+
+![Twitter Graph Data Model](/users/user/documents/apps/spring-boot-graph-processing-example/twitter-graph-path-5.png)
+
+### Category
+
+Categories will be inferred over time by analyzing the top ranked phrases and submitting the group of tweets as a document to GCP's classification API.
+
+![Twitter Graph Example Model](/users/user/documents/apps/spring-boot-graph-processing-example/twitter-graph-example-5.png)
+
+
+## External APIs
+
+To be able to run the example, you'll need to provide API authorization for both the GCP NLP API and Twitter Developer API.
+
+- Check out consumerKey and accessToken at the [Twitter developer site](https://dev.twitter.com)
+- Check out GCP token authorization file at [GCP developer documentation](https://cloud.google.com/docs/authentication/production)
+- Fill out Twitter properties on `docker-compose.yaml`
+- Add your GCP authorization to `twitter-rank-crawler/credentials.json`
+- Please do not check-in your secrets to GitHub!
+- Run `docker-compose up` in your terminal console
 
 ## License
 
-This library is an open source product licensed under GPLv3.
+This library is an open source product licensed under Apache License 2.0.

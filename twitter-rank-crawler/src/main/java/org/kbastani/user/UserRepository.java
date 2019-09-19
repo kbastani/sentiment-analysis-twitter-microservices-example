@@ -1,8 +1,9 @@
-package org.kbastani.twitter;
+package org.kbastani.user;
 
 import org.springframework.data.neo4j.annotation.Query;
-import org.springframework.data.neo4j.repository.GraphRepository;
+import org.springframework.data.neo4j.repository.Neo4jRepository;
 import org.springframework.data.repository.query.Param;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Set;
 
@@ -11,7 +12,7 @@ import java.util.Set;
  *
  * @author kbastani
  */
-public interface UserRepository extends GraphRepository<User> {
+public interface UserRepository extends Neo4jRepository<User, Long> {
 
     User findUserByScreenName(String screenName);
 
@@ -20,7 +21,7 @@ public interface UserRepository extends GraphRepository<User> {
     @Query("MATCH (user:User { profileId: {profileId} }) RETURN id(user) as id")
     Long getUserIdByProfileId(@Param("profileId") Long profileId);
 
-    @Query("MATCH (user:User) WHERE has(user.pagerank) AND has(user.screenName) AND coalesce(user.imported, false) = true\n" +
+    @Query("MATCH (user:User) WHERE exists(user.pagerank) AND exists(user.screenName) AND coalesce(user.imported, false) = true\n" +
             "WITH user\n" +
             "ORDER BY user.pagerank DESC\n" +
             "SKIP {skip}\n" +
@@ -28,8 +29,25 @@ public interface UserRepository extends GraphRepository<User> {
             "RETURN user")
     Set<User> findRankedUsers(@Param("skip") Integer skip, @Param("limit") Integer limit);
 
+    @Query("MATCH (user:User)-[:TWEETED]->(tweet:Tweet),\n" +
+            "\t(tweet)-[entity:HAS_ENTITY]->(:TextEntity)\n" +
+            "WHERE (user)-[:NEXT]-()\n" +
+            "RETURN user.profileId as userProfileId, COLLECT(TOFLOAT(entity.sentiment)) as sentiment")
+    Set<SentimentResult> findUserSentimentResults();
+
+    @Query("MATCH (user:User)-[:NEXT]-(), (user)-[:TWEETED]->()-[r:HAS_ENTITY]->(e:TextEntity)\n" +
+            "WHERE user.profileId = {profileId}\n" +
+            "RETURN user.profileId as userProfileId, COLLECT(r.sentiment) as sentiment")
+    SentimentResult getUserSentiment(@Param("profileId") Long profileId);
+
+    @Query("FOREACH(x in {users} | MERGE (user:User { profileId: x.profileId })\n" +
+            "SET user.averageSentiment = x.averageSentiment\n" +
+            "SET user.stdSentiment = x.stdSentiment\n" +
+            "SET user.cumulativeSentiment = x.cumulativeSentiment)")
+    void updateUserStatistics(@Param("users") Set<User> users);
+
     @Query("MATCH (a:User)<-[r:FOLLOWS]-(b)\n" +
-            "WHERE NOT has(a.screenName)\n" +
+            "WHERE NOT exists(a.screenName)\n" +
             "WITH a, count(r) as weight\n" +
             "WHERE weight > 2\n" +
             "WITH a, weight\n" +
@@ -39,17 +57,24 @@ public interface UserRepository extends GraphRepository<User> {
             "RETURN a")
     User findNextUserToCrawl();
 
-    @Query("MATCH (user:User) WHERE has(user.pagerank) AND NOT has(user.screenName)\n" +
+    @Query("MATCH (user:User) WHERE exists(user.pagerank) AND NOT exists(user.screenName)\n" +
             "WITH user\n" +
             "ORDER BY user.pagerank DESC\n" +
             "LIMIT 1\n" +
             "RETURN user")
     User findRankedUserToCrawl();
 
+    @Query("MATCH (user:User) WHERE exists(user.pagerank) AND exists(user.screenName) AND (user)-[:NEXT]-()\n" +
+            "WITH user\n" +
+            "ORDER BY coalesce(user.lastActivityScan, 0)\n" +
+            "LIMIT 1\n" +
+            "RETURN user")
+    User findNextUserActivityScan();
+
     /**
      * Initialize the user.lastPageRank value to the current user.pagerank
      */
-    @Query("MATCH (user:User) WHERE has(user.pagerank) AND has(user.screenName) AND NOT has(user.lastPageRank)\n" +
+    @Query("MATCH (user:User) WHERE exists(user.pagerank) AND exists(user.screenName) AND NOT exists(user.lastPageRank)\n" +
             "WITH collect(user) as users\n" +
             "FOREACH(x in users | \n" +
             "SET x.lastPageRank = toFloat(x.pagerank))")
@@ -59,7 +84,7 @@ public interface UserRepository extends GraphRepository<User> {
      * Updates the current rank and last rank of each ranked user. This query allows us to see how much a
      * user's rank has increased or decreased from the last PageRank job.
      */
-    @Query("MATCH (user:User) WHERE has(user.pagerank) AND has(user.screenName) AND has(user.lastPageRank) AND user.imported = true\n" +
+    @Query("MATCH (user:User) WHERE exists(user.pagerank) AND exists(user.screenName) AND exists(user.lastPageRank)\n" +
             "WITH user\n" +
             "ORDER BY user.pagerank DESC\n" +
             "WITH collect(user) as users\n" +
@@ -73,10 +98,12 @@ public interface UserRepository extends GraphRepository<User> {
             "\tSET x.user.lastPageRank = x.user.pagerank)")
     void updateUserCurrentRank();
 
+
     /**
      * Updates a linked list of users in the order that they are discovered.
      */
-    @Query("MATCH (user:User) WHERE has(user.discoveredTime)\n" +
+    @Transactional
+    @Query("MATCH (user:User) WHERE exists(user.discoveredTime)\n" +
             "WITH user ORDER BY user.discoveredTime\n" +
             "WITH collect(user) as users\n" +
             "UNWIND range(0,size(users)-2) as idx\n" +
@@ -85,4 +112,11 @@ public interface UserRepository extends GraphRepository<User> {
             "SET s1.discoveredRank = n1 + 1\n" +
             "SET s2.discoveredRank = n1 + 2")
     void updateDiscoveryChain();
+
+    @Query("MATCH (u:User)\n" +
+            "WITH collect(u) as nodes\n" +
+            "CALL apoc.algo.pageRankWithConfig(nodes,{iterations:10,types:\"FOLLOWS\"}) YIELD node, score\n" +
+            "WITH node, score\n" +
+            "SET node.pagerank = score")
+    void updatePageRankForFollowGraph();
 }

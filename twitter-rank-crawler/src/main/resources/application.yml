@@ -2,21 +2,22 @@ spring.profiles.active: 'production'
 ---
 server:
   port: 8080
-  servletPath: /
 spring:
-  neo4j:
-    port: 7474
-    host: 'graphdb'
+  data:
+    neo4j:
+      uri: "bolt://graphdb"
   rabbitmq:
     port: 5672
     host: 'rabbit'
     username: guest
     password: guest
     listener:
-      max-concurrency: 1
-      prefetch: 1
-      acknowledge-mode: auto
-      auto-startup: true
+      simple:
+        max-concurrency: 1
+      direct:
+        prefetch: 1
+        acknowledge-mode: auto
+        auto-startup: true
     dynamic: true
   social:
     twitter:
@@ -25,30 +26,35 @@ spring:
       appSecret: 'replace'
       appId: 'replace'
   profiles: 'production'
+neo4j:
+  mazerunner:
+    host: "http://graphdb:7474"
 eureka:
   client:
     serviceUrl:
       defaultZone: http://discovery:8761/eureka/
+    allow-redirects: true
   instance:
     preferIpAddress: true
 ---
 server:
   port: 8080
-  servletPath: /
 spring:
-  neo4j:
-    port: 7474
-    host: '192.168.99.100'
+  data:
+    neo4j:
+      uri: "bolt://192.168.99.100"
   rabbitmq:
     port: 5672
     host: 'localhost'
     username: guest
     password: guest
     listener:
-      max-concurrency: 1
-      prefetch: 1
-      acknowledge-mode: auto
-      auto-startup: true
+      direct:
+        prefetch: 1
+        acknowledge-mode: auto
+        auto-startup: true
+      simple:
+        max-concurrency: 1
     dynamic: true
   social:
     twitter:
@@ -61,26 +67,31 @@ eureka:
   client:
     serviceUrl:
       defaultZone: http://localhost:8761/eureka/
+    allow-redirects: true
   instance:
     preferIpAddress: true
+neo4j:
+  mazerunner:
+    host: "http://localhost:7474"
 ---
 server:
   port: 8080
-  servletPath: /
 spring:
-  neo4j:
-    port: 7474
-    host: '192.168.99.100'
+  data:
+    neo4j:
+      uri: "bolt://192.168.99.100"
   rabbitmq:
     port: 5672
     host: 'localhost'
     username: guest
     password: guest
     listener:
-      max-concurrency: 1
-      prefetch: 1
-      acknowledge-mode: auto
-      auto-startup: true
+      simple:
+        max-concurrency: 1
+      direct:
+        prefetch: 1
+        acknowledge-mode: auto
+        auto-startup: true
     dynamic: true
   social:
     twitter:
@@ -92,3 +103,6 @@ spring:
 eureka:
   client:
     enabled: false
+neo4j:
+  mazerunner:
+    host: "http://localhost:7474"

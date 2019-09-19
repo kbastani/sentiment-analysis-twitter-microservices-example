@@ -1,7 +1,7 @@
-package org.kbastani.twitter;
+package org.kbastani.user;
 
 import org.springframework.data.neo4j.annotation.Query;
-import org.springframework.data.neo4j.repository.GraphRepository;
+import org.springframework.data.neo4j.repository.Neo4jRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 
@@ -11,7 +11,7 @@ import java.util.Set;
  * This repository provides access to create efficient batched relationships between users using Spring Data Neo4j
  */
 @RepositoryRestResource(collectionResourceRel = "following", itemResourceRel = "following", path = "following")
-public interface FollowsRepository extends GraphRepository<Follows> {
+public interface FollowsRepository extends Neo4jRepository<Follows, Long> {
 
     /**
      * Efficiently batches the creation of many FOLLOWS relationships
