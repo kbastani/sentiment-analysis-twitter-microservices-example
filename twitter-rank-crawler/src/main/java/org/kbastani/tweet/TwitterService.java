@@ -127,23 +127,21 @@ public class TwitterService {
                 log.info(String.format("Getting initial user tweets for %s...", user.getScreenName()));
                 User finalUser2 = user;
                 unfilteredTweets = Optional.of(twitter.timelines().getUserTimeline(user.getScreenName(),
-                        new Paging(1, 10))).get();
+                        new Paging(1, 20))).get();
 
                 tweets = unfilteredTweets.stream()
-                        .filter(t -> !t.isRetweet() &&
-                                (t.getInReplyToScreenName() != null && !t.getInReplyToScreenName().isEmpty()))
+                        .filter(t -> !t.isRetweet() && (!t.getText().startsWith("@")))
                         .map(t -> new Tweet(t.getId(), t.getText(), finalUser2.getProfileId(), t.getCreatedAt()))
                         .collect(Collectors.toList());
             } else {
                 log.info(String.format("Getting subsequent user tweets for %s...", user.getScreenName()));
                 User finalUser1 = user;
                 unfilteredTweets = Optional.of(twitter.timelines().getUserTimeline(user.getScreenName(),
-                        new Paging(1, 10,
+                        new Paging(1, 20,
                                 Integer.MAX_VALUE, user.getLastImportedTweetId()))).get();
 
                 tweets = unfilteredTweets.stream()
-                        .filter(t -> !t.isRetweet() &&
-                                (t.getInReplyToScreenName() != null && !t.getInReplyToScreenName().isEmpty()))
+                        .filter(t -> !t.isRetweet() && (!t.getText().startsWith("@")))
                         .map(t -> new Tweet(t.getId(), t.getText(), finalUser1.getProfileId(), t.getCreatedAt()))
                         .collect(Collectors.toList());
 
